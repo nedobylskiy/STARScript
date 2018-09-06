@@ -35,7 +35,8 @@ function extractClassComponents(source) {
         storage = '';
     } else {
         if(typeof  storage[1] !== 'undefined') {
-            storage = storage[1];
+            storage = extractUntilBracesOff(source.substr(storage.index) );
+            //storage = storage[1];
         }
     }
     classStorageRegexp.lastIndex = 0;
@@ -46,6 +47,7 @@ function extractClassComponents(source) {
         property = '';
     } else {
         if(typeof  property[1] !== 'undefined') {
+            property = extractUntilBracesOff(source.substr(property.index) );
             property = property[1];
         }
     }
@@ -406,6 +408,41 @@ function decompose(source) {
     source = getClasses(source);
 
     return source
+}
+
+
+/**
+ * Extract text until braces count changes to 0
+ * @param source
+ * @return {string}
+ */
+function extractUntilBracesOff(source) {
+    let extracted = '';
+    let bracesCount = 0;
+    let waitForBrace = true;
+    source = source.split('');
+
+    let i = 0;
+    while (true) {
+        extracted += source[i];
+
+        if(source[i] === '{') {
+            bracesCount++;
+            waitForBrace = false;
+        }
+
+        if(source[i] === '}') {
+            bracesCount--;
+        }
+
+        if(bracesCount === 0 && waitForBrace === false) {
+            break;
+        }
+
+        i++;
+    }
+
+    return extracted;
 }
 
 module.exports.removeComments = removeComments;

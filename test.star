@@ -31,7 +31,7 @@ class Name extends Parent{
 		return this._sayHelloToAll([who]);
 	}
 
-	private _sayHelloToAll(string[] whos){
+	private _sayHelloToAll(string[] whos, array who){
 		let hellows = '';
 		for(let who of whos){
 		    hellows+=`Hello, ${who}`;
@@ -48,11 +48,15 @@ class NotExtended{
 
     Storage: {
         Number ITSNOTEXTENDED = 100500;
-        BlockchainArraySafe justArray = [1,2,3];
+        Object justArray = {a:{b:123}};
     }
 
     Property: {
         String hello = 'Hello';
+    }
+
+    public test(){
+        return storage.ITSNOTEXTENDED;
     }
 }
 

@@ -10,7 +10,7 @@
  */
 
 
-const ECMA_INTERNAL = 'const _ECMA_INTERNAL =  (new ' + function () {
+const ECMA_INTERNAL = 'const _ECMA_INTERNAL = new ( ' + function () {
     let globalStorageInstanes = {};
     return {
         /**
@@ -27,6 +27,24 @@ const ECMA_INTERNAL = 'const _ECMA_INTERNAL =  (new ' + function () {
                 }
 
                 assert.true(false, 'STARScript: Invalid input string');
+            },
+            number: function (input) {
+                if(typeof input === 'number') {
+                    return input;
+                }
+
+                if(!Number.isNaN(Number(input)) && Number.isFinite(Number(input))) {
+                    return Number(input);
+                }
+
+                assert.true(false, 'STARScript: Invalid input Number');
+            },
+            BigNumber: function (input) {
+                if(!new BigNumber(input).isNaN()) {
+                    return new BigNumber(input);
+                }
+
+                assert.true(false, 'STARScript: Invalid input BigNumber');
             }
         },
         /**
@@ -93,6 +111,9 @@ function getMethodObjByName(name, classObj) {
 function getEventsCreationStr(events) {
     let str = '';
     for (let event of events) {
+        if(event.params.length > 10) {
+            throw 'Error: Event can take 10 arguments maximum in "' + event.name + '" event'
+        }
         let types = paramsArray2jsParams(event.params, true);
         str += `this.${event.name} = new Event('${event.name}', ${types.params});\n`;
     }
@@ -109,8 +130,14 @@ function getEventsCreationStr(events) {
  */
 function createParamValidator(param) {
     switch (param.type) {
+        case 'String':
         case 'string':
             return `${param.name} = _ECMA_INTERNAL.validateType.string(${param.name});\n`;
+        case 'number':
+        case 'Number':
+            return `${param.name} = _ECMA_INTERNAL.validateType.number(${param.name});\n`;
+        case 'BigNumber':
+            return `${param.name} = _ECMA_INTERNAL.validateType.BigNumber(${param.name});\n`;
         default:
             throw 'Error: Invalid param type: "' + param.type + '"';
     }
@@ -120,7 +147,7 @@ function eventsEmitToCall(source, emits) {
     for (let emit of emits) {
         let params = (emit.params.join(', ') + ' ').replace(',  ', '');
 
-        let eventCall = `this.${emit.event}(${params});\n`;
+        let eventCall = `this.${emit.event}.emit(${params});\n`;
 
         source = source.replace(emit.template, eventCall);
     }
@@ -179,7 +206,7 @@ function composeClass(classObj) {
 
     let storage = composeStorage(classObj.components.storage);
     let constructStorage = `\n\nconst that = this; this._storageTypes = {}; this._varsStorage = _ECMA_INTERNAL.createOrGetGlobalStorageInstance("${classObj.info.name}");\n
-        this.storage = (function(){
+        this.storage = new (function(){
             let that2 = this;
             this.currentInstances = {};
             return  new Proxy(this, {
@@ -187,8 +214,8 @@ function composeClass(classObj) {
                     that2.currentInstances[name] = object;
                 },
                  get(target, item) {
-                    if(typeof that2.currentInstances[name] !== 'undefined'){
-                        return that2.currentInstances[name];
+                    if(typeof that2.currentInstances[item] !== 'undefined'){
+                        return that2.currentInstances[item];
                     }
                     let encodedVar = that._varsStorage.get(item);
                     if(!encodedVar){
@@ -205,7 +232,8 @@ function composeClass(classObj) {
                     
                     that._varsStorage.put(item, _ECMA_INTERNAL.encodeType(value, type));
                                         
-                    return value;
+                   // return value;
+                    return true;
                  }
             });
         })();\n
@@ -252,6 +280,8 @@ function composeClass(classObj) {
     //Methods and properties
     classJsSource += '  ' + composeProperty(classObj.components.property);
     classJsSource += '  ' + composeMethods(classObj.components.methods, classObj);
+
+    classJsSource += '\ninit(){}\n';
 
     classJsSource += "\n}\n";
 
@@ -303,6 +333,9 @@ function composeStorage(storage) {
                 continue;
             case 'BigNumber':
                 constructVars += `   this._storageTypes['${v.name}']='BigNumber';  this.storage.${v.name} = new BigNumber(${v.value});   this._varsStorage.put('${v.name}', _ECMA_INTERNAL.encodeType(${v.value}, 'BigNumber'));\n`;
+                continue;
+            case 'Object':
+                constructVars += `   this._storageTypes['${v.name}']='object'; this.storage.${v.name} = ${v.value};   this._varsStorage.put('${v.name}', _ECMA_INTERNAL.encodeType(${v.value}, 'object'));\n`;
                 continue;
             default:
                 throw 'Error: Undefined storage type "' + v.type + '" for "' + v.name + '"';
