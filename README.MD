@@ -203,7 +203,7 @@ And you can use it just with storage object:
     //Internal types  stores data itself
     storage.stoooraaage.put('Key','Value');
     console.log(storage.safetyFirst[2]); //Writes 'o'
-    storage.myArray = that.storage.dangerous.toArray; //Dangerous but works
+    storage.myArray = that.storage.dangerous.toArray(); //Dangerous but works
 ```
 
 ## Events
