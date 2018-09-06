@@ -207,7 +207,7 @@ And you can use it just with storage object:
 ```
 
 ## Events
-STAR is a event-driving language. Main idea - every pure STAR objects can *emit* some events with several params while working. Other object and external objects can subscribe to this events and work with it.
+STAR is a event-driving language. Main idea - every pure STAR objects can *emit* some events with some data params while working. Other object and external objects can subscribe to this events and work with it.
 
 STAR events based on ECMAScript Smart Contracts Events
 
