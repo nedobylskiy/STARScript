@@ -206,7 +206,64 @@ And you can use it just with storage object:
 ```
 
 ## Events
-STAR is a event-driving language. 
+STAR is a event-driving language. Main idea - every pure STAR objects can *emit* some events with several params while working. Other object and external objects can subscribe to this events and work with it.
+
+STAR events based on ECMAScript Smart Contracts Events
+
+First you can declare events in `Event` block:
+
+```javascript
+    Event:{
+        Hello(string); //Hello event with greetings string
+        Bye(string);   //Other event
+    }
+```
+
+and now you can *emit* this events as you want: 
+
+```javascript
+    public sayHello(string person){
+        emit Hello(person);
+    }
+    
+    public sayBye(string theNameOfTheHandYouWantToWave){
+        emit Bye(theNameOfTheHandYouWantToWave);
+    }
+```
+
+## Properties
+Just object constant properties. Accesaible via this.propertyName
+
+For ex:
+```javascript
+    Property: {
+        String Foo = 'Bar';
+        Number Pi = 3.14;
+    }
+    
+   ...in some method...
+   
+   console.log(this.Foo); //'Bar'
+   console.log(this.Pi*(radius/radius)); //Some circle square
+```
+
+## Compiler usage
+Compiler works on 2 stages:
+* Parsing and prepare source description object - `Source tree`
+* Composing(compiling) `Source tree` to file with one of composers
+
+At now you can use only ECMAScript Smart Contract composer
+
+Usage:
+
+```bash
+# Create source tree
+node main.js test.star --source-tree test.star.json
+
+# Create contract
+node main.js test.star --ecma-contract test.js --ecma-contract-class Name
+
+```
 
 ## Contributing
 * Fork this repository
