@@ -60,6 +60,8 @@ if(program.ecmaContract) {
     }
     if(program.minify) {
         composed = require("uglify-es").minify(composed).code;
+    } else {
+        composed = require('js-beautify').js(composed, {indent_size: 2, space_in_empty_paren: true});
     }
 
     if(program.ecmaContract === true) {
