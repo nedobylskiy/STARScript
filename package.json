@@ -1,11 +1,14 @@
 {
   "name": "starscript",
   "version": "1.0.0",
-  "description": "",
+  "description": "Safe Templated Application-Related Script",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "dependencies": {
+    "commander": "^2.17.1"
+  },
+  "author": "Andrey Nedobylsky",
   "license": "ISC"
 }
