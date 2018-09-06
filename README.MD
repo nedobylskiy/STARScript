@@ -97,7 +97,7 @@ All methods has access to storage object, like `this.storage` or just `storage`.
 `that` is a like you write `const that = this;` in header of the method. It's useful for accessing main object context from any function or place.
 
 ## Methods typing
-As you can see all methods has types in arguments list. STAR guaranteed that the type of the arguments variable matches or can be cast to appropriate type. For example:
+As you can see all methods has types in arguments list. STAR guaranteed that the type of the arguments variable matches or can be cast to requested type. For example:
 
 ```javascript
     /**
