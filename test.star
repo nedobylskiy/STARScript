@@ -20,11 +20,11 @@ class Name extends Parent{
 	    number pi = 3.14;
 	}
 
-	Name(){ //Конструктор, вызываемый по имени
+	public Name(){ //Конструктор, вызываемый по имени
 
 	}
 
-	public hello(string who){ //синаксис похожий на си
+	public hello(string who, string[] params){ //синаксис похожий на си
 		return who+' world';
 	}
 
@@ -34,7 +34,7 @@ class Name extends Parent{
 }
 
 
-
+/*
 class Same extends Name{
 
 	const string HELLO = 'World';
@@ -49,4 +49,4 @@ class Same extends Name{
 	string hello(string who){ //синаксис похожий на си
 		return who+' world class';
 	}
-}
+}*/
