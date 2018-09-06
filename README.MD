@@ -74,6 +74,7 @@ Standard ECMAScript Smart Contracts initialization for early example is:
             this.storage = new KeyValue('SimpleApplication');
             if(contracts.isDeploy()){
                 this.storage.put('CallsCount', 0);
+                console.log('I am constructed');
             }
         }
     }
