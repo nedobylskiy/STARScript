@@ -21,7 +21,7 @@ class Name extends Parent{
 	}
 
 	public Name(){ //Конструктор, вызываемый по имени
-
+        emit Mint('SOME ADDRESS', 100500);
 	}
 
 	public hello(string who, string[] params){ //синаксис похожий на си

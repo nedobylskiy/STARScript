@@ -72,8 +72,51 @@ function extractClassComponents(source) {
         events: parseEvents(events),
         storage: parseVarsDefinitions(storage),
         property: parseVarsDefinitions(property),
+        emits: extractEventsEmits(source),
         methods: methodsArr
     };
+}
+
+
+/**
+ * Parse params to array
+ * @param paramsSource
+ * @return {Array}
+ */
+function parseParams(paramsSource) {
+    const paramsSeparatorRegexp = /\s*([\"\'\`][^]*?[\"\'\`]|[^\'\"\`]*?)\s*(,|$)/mg;
+    let params = [];
+    let paramsMatch;
+
+    while ((paramsMatch = paramsSeparatorRegexp.exec(paramsSource)) !== null) {
+        if(paramsMatch[1].trim().length === 0) {
+            break;
+        }
+        params.push(paramsMatch[1].trim());
+    }
+
+    return params;
+}
+
+/**
+ * Extract all code emit events occurrences
+ * @param classSource
+ */
+function extractEventsEmits(classSource) {
+    const emitRegexp = /emit\s*([A-Za-z0-9_]*)\s*\(([^]*?)\)\s*;/gm;
+    let emits = [];
+    let emitSource;
+
+    while ((emitSource = emitRegexp.exec(classSource)) !== null) {
+        emits.push({
+            template: emitSource[0].trim(),
+            event: emitSource[1].trim(),
+            params: parseParams(emitSource[2].trim())
+        });
+    }
+
+
+    return emits;
 }
 
 /**
