@@ -11,7 +11,7 @@ String.prototype.replaceAt = function (index, replace) {
 const classEventsRegexp = /Event\s*:*\s*{\s*([^]*?)\s*?}/mg;
 const classStorageRegexp = /Storage\s*:*\s*{\s*([^]*?)\s*?}/mg;
 const classPropertyRegexp = /Property\s*:*\s*{\s*([^]*?)\s*?}/mg;
-const classMethodsRegexp = /(public|private)\s*([A-Za-z0-9_]*)\(([A-Za-z0-9_, \[\]]*)\)\s*{([^]*?)}/mg;
+const classMethodsRegexp = /(public|private)\s*([A-Za-z0-9_]*)\(([A-Za-z0-9_, \[\]]*)\)\s*{([^]*?)/mg;
 
 
 /**
@@ -28,6 +28,7 @@ function extractClassComponents(source) {
             events = events[1];
         }
     }
+    classEventsRegexp.lastIndex = 0;
 
     let storage = classStorageRegexp.exec(source);
     if(!storage) {
@@ -37,6 +38,8 @@ function extractClassComponents(source) {
             storage = storage[1];
         }
     }
+    classStorageRegexp.lastIndex = 0;
+
 
     let property = classPropertyRegexp.exec(source);
     if(!property) {
@@ -46,26 +49,53 @@ function extractClassComponents(source) {
             property = property[1];
         }
     }
+    classPropertyRegexp.lastIndex = 0;
 
+
+    /**
+     * Extracts method body if we know method declaration and next method declaration
+     * @param source
+     * @param declaration
+     * @param nextMethod
+     * @return {string}
+     */
+    function extractMethodBody(source, declaration, nextMethod) {
+        let body = source.split(declaration)[1];//
+
+        if(nextMethod !== "") {
+            body = body.split(nextMethod)[0].trim();
+            body = body.replaceAt(body.lastIndexOf('}'), '').trim();
+        } else {
+            body = body.substr(0, body.lastIndexOf('}') - 2).trim();
+        }
+        return body;
+    }
 
     let methodsArr = [];
-    /* let methods = classMethodsRegexp.exec(source);
-     if(!methods) {
-         methods = '';
-     } else {
-         if(typeof  methods[1] !== 'undefined') {
-             methods = methods[1];
-         }
-     }*/
     let methodSource;
 
     while ((methodSource = classMethodsRegexp.exec(source)) !== null) {
-        methodsArr.push({
+        let method = {
+            declaration: methodSource[0].trim(),
             type: methodSource[1].trim(),
             name: methodSource[2].trim(),
             params: parseParametersList(methodSource[3].trim()),
-            body: methodSource[4].trim()
-        });
+            //body: methodSource[4].trim()
+        };
+
+
+        methodsArr.push(method);
+    }
+    classMethodsRegexp.lastIndex = 0;
+
+    for (let i = 0; i < methodsArr.length; i++) {
+        let firstMethod = methodsArr[i].declaration;
+        let secondMethod = '';
+        if(i + 1 <= (methodsArr.length - 1)) {
+            secondMethod = methodsArr[i + 1].declaration;
+        }
+
+        methodsArr[i].source = extractMethodBody(source, firstMethod, secondMethod);
     }
 
     return {
@@ -125,7 +155,7 @@ function extractEventsEmits(classSource) {
  * @return {Array}
  */
 function parseEvents(events) {
-    const eventsRegexp = /([A-Za-z_0-9]*)\s*\(([A-Za-z0-9_, ]*)\)\s*;/mg;
+    const eventsRegexp = /([A-Za-z_0-9]*)\s*\(([A-Za-z0-9_, \[\]]*)\)\s*;/mg;
     let eventsParsed;
     let eventsArray = [];
     while ((eventsParsed = eventsRegexp.exec(events)) !== null) {
@@ -262,11 +292,15 @@ function getClasses(text) {
 
         //Class parsing finished
         if(isClassNow && !openQuote && openCBrace === 1 && text[ci] === '}') {
+
+            let info = getClassInfo(currentClassText);
+
             classes.push({
-                info: getClassInfo(currentClassText),
+                info: info,
                 components: extractClassComponents(currentClassText),
                 source: currentClassText.trim()
             });
+
             currentClassText = '';
         }
 
@@ -303,8 +337,6 @@ function parseOnceBlockRec(text) {
     // text = text.replaceAt(0, '');
 
 
-    console.log('TEXT', text);
-
     let source = text;
     text = text.split('');
 
@@ -337,8 +369,6 @@ function parseOnceBlockRec(text) {
     return [];
 
 
-    console.log('BTEXT', currentBlockText);
-
     /*if(openCBrace === -1) {
         blocks.push(text.join('').trim());
     }*/
@@ -366,7 +396,20 @@ function parseOnceBlockRec(text) {
 
 }*/
 
+/**
+ * Decompose (parse) sources to sourcetree object
+ * @param source
+ * @return {Array}
+ */
+function decompose(source) {
+    source = removeComments(source);
+    source = getClasses(source);
+
+    return source
+}
+
 module.exports.removeComments = removeComments;
 module.exports.getClasses = getClasses;
 module.exports.parseOnceBlockRec = parseOnceBlockRec;
+module.exports.decompose = decompose;
 
