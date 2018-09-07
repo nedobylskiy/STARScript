@@ -26,7 +26,7 @@ const ECMA_INTERNAL = 'const _ECMA_INTERNAL = new ( ' + function () {
                     return input.toString();
                 }
 
-                assert.true(false, 'STARScript: Invalid input string');
+                assert.true(false, 'STARScript: Invalid input string ' + (new Error().stack));
             },
             number: function (input) {
                 if(typeof input === 'number') {
@@ -37,14 +37,32 @@ const ECMA_INTERNAL = 'const _ECMA_INTERNAL = new ( ' + function () {
                     return Number(input);
                 }
 
-                assert.true(false, 'STARScript: Invalid input Number');
+                assert.true(false, 'STARScript: Invalid input Number ' + (new Error().stack));
             },
             BigNumber: function (input) {
                 if(!new BigNumber(input).isNaN()) {
                     return new BigNumber(input);
                 }
 
-                assert.true(false, 'STARScript: Invalid input BigNumber');
+                assert.true(false, 'STARScript: Invalid input BigNumber ' + (new Error().stack));
+            },
+            object: function (input) {
+                if(typeof input === 'object') {
+                    return input;
+                }
+
+                assert.true(false, 'STARScript: Invalid input Object ' + (new Error().stack));
+            },
+            array: function (input) {
+                if(Array.isArray(input)) {
+                    return input;
+                }
+
+                if(typeof input['toArray'] !== 'undefined') {
+                    return input.toArray();
+                }
+
+                assert.true(false, 'STARScript: Invalid input Array ' + (new Error().stack));
             }
         },
         /**
@@ -136,6 +154,12 @@ function createParamValidator(param) {
         case 'number':
         case 'Number':
             return `${param.name} = _ECMA_INTERNAL.validateType.number(${param.name});\n`;
+        case 'object':
+        case 'Object':
+            return `${param.name} = _ECMA_INTERNAL.validateType.object(${param.name});\n`;
+        case 'array':
+        case 'Array':
+            return `${param.name} = _ECMA_INTERNAL.validateType.array(${param.name});\n`;
         case 'BigNumber':
             return `${param.name} = _ECMA_INTERNAL.validateType.BigNumber(${param.name});\n`;
         default:
@@ -143,6 +167,12 @@ function createParamValidator(param) {
     }
 }
 
+/**
+ * Converts emits
+ * @param source
+ * @param emits
+ * @return {*}
+ */
 function eventsEmitToCall(source, emits) {
     for (let emit of emits) {
         let params = (emit.params.join(', ') + ' ').replace(',  ', '');
@@ -335,6 +365,7 @@ function composeStorage(storage) {
                 constructVars += `   this._storageTypes['${v.name}']='BigNumber';  this.storage.${v.name} = new BigNumber(${v.value});   this._varsStorage.put('${v.name}', _ECMA_INTERNAL.encodeType(${v.value}, 'BigNumber'));\n`;
                 continue;
             case 'Object':
+            case 'object':
                 constructVars += `   this._storageTypes['${v.name}']='object'; this.storage.${v.name} = ${v.value};   this._varsStorage.put('${v.name}', _ECMA_INTERNAL.encodeType(${v.value}, 'object'));\n`;
                 continue;
             default:
