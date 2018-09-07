@@ -187,12 +187,10 @@
             height: 88vh;
         }
 
-        .fileButtons{
+        .fileButtons {
             border-bottom: #6a6b66 0.5px solid;
         }
     }
-
-
 
     @media only screen and (max-width: 990px) and (min-height: 641px) {
         #editor {
@@ -211,7 +209,6 @@
             height: 85vh;
         }
     }
-
 
 
 </style>
@@ -236,26 +233,7 @@
     </div>
     <div class="col-md-12 nomarginnopadding">
         <div class="col-md-9 nomarginnopadding">
-            <div id="editor">class SimpleContact extends Contract{
-                Storage: {
-                Number CallsCount = 0;
-                }
-
-                Property: {
-                String NAME = 'SimpleContract';
-                }
-
-                Event: {
-                ContractCall(number);
-                }
-
-                public call(){
-                storage.CallsCount++;
-                console.log('CallsCount', storage.CallsCount);
-                emit ContractCall(storage.CallsCount);
-                return true;
-                }
-                }
+            <div id="editor">
             </div>
         </div>
         <div class="col-md-3 nomarginnopadding rightbar">
@@ -319,6 +297,47 @@
 
     let files = [];
     let targetClass;
+
+
+    const DEFAULT = `
+/**
+* Example Smart Contract
+*/
+class SimpleContract extends Contract{
+
+    Storage: {
+        Number CallsCount = 0;
+    }
+
+    Property: {
+        String NAME = 'SimpleContract';
+    }
+
+    Event: {
+        ContractCall(number);
+    }
+
+    /**
+     * SimpleContract constructor
+     * @constructor
+     */
+    public SimpleContract(){
+        console.log('Hello!');
+    }
+
+    /**
+    * Call counter
+    * @public
+    * @returns {Boolean}
+    */
+    public call(){
+        storage.CallsCount++;
+        console.log('CallsCount', storage.CallsCount);
+        emit ContractCall(storage.CallsCount);
+        return true;
+    }
+
+}`;
 
     /**
      * Creates source tree
@@ -400,6 +419,7 @@
     editor.setTheme("ace/theme/monokai");
     editor.session.setMode("ace/mode/star");
     editor.setAutoScrollEditorIntoView(true);
+    editor.setValue(DEFAULT);
     files.push({name: 'Untitled.star', content: editor.getValue()});
 
     let editorMode = editor.session.getMode();
