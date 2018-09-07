@@ -268,6 +268,9 @@ node main.js test.star --ecma-contract test.js --ecma-contract-class Name
 
 ```
 
+## Development environment
+You can find it here: https://lailune.github.io/STARScript/online/
+
 ## Contributing
 * Fork this repository
 * Make changes
