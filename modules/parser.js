@@ -25,7 +25,8 @@ function extractClassComponents(source) {
         events = '';
     } else {
         if(typeof  events[1] !== 'undefined') {
-            events = events[1];
+            events = extractUntilBracesOff(source.substr(events.index) );
+            //events = events[1];
         }
     }
     classEventsRegexp.lastIndex = 0;
@@ -48,7 +49,7 @@ function extractClassComponents(source) {
     } else {
         if(typeof  property[1] !== 'undefined') {
             property = extractUntilBracesOff(source.substr(property.index) );
-            property = property[1];
+            //property = property[1];
         }
     }
     classPropertyRegexp.lastIndex = 0;
