@@ -2,9 +2,699 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>STARScript compile</title>
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>STARS - STAR Script Simple Development Environment and compiler</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
+</head>
+<style type="text/css" media="screen">
+    body {
+        background: #272822;
+        color: #f6f6f0;
+        font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    }
+
+    #editor {
+        /* position: absolute;*/
+        width: 100%;
+        height: 74vh;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    .nomarginnopadding {
+        margin: 0;
+        padding: 0;
+    }
+
+    .rightbar {
+        height: 74vh;
+        border-left: #6a6b66 0.5px solid;
+        overflow: auto;
+    }
+
+    .logo {
+        background-image: url(../logo.fw.png);
+        height: 40px;
+        background-size: 40px;
+        max-width: 40px;
+        margin-top: -5px;
+
+    }
+
+    .starsName {
+        padding: 0;
+        max-width: 100px;
+    }
+
+    .starsTextLogo {
+        margin-top: -5px;
+        padding-left: 10px;
+        margin-bottom: 0;
+    }
+
+    .toolbar {
+        padding-top: 10px;
+        border-bottom: #6a6b66 0.5px solid;
+    }
+
+    .console {
+        height: 20vh;
+        border-top: #6a6b66 0.5px solid;
+        padding-left: 20px;
+        overflow: auto;
+    }
+
+    .sectionDescr {
+        /* color: #d4356c;*/
+        font-weight: bold;
+    }
+
+    /*.sectionDescr{
+        color: #d4356c;
+        font-weight: bold;
+    }*/
+
+    .varType {
+        color: #58c7d9;
+        font-style: italic;
+        /*font-weight: bold;*/
+    }
+
+    .classMuted, .methodPrivate {
+        color: #84847e;
+    }
+
+    .propertyValue {
+        color: #84847e;
+    }
+
+    .classSelector {
+        width: 100%;
+        background: #272822;
+        color: #f6f6f0;
+        border-color: #84847e;
+    }
+
+    .consoleerror {
+        color: #ff0030;
+    }
+
+    .consolewarning {
+        color: #ffa200;
+    }
+
+    .consoleinfo {
+        color: #ffffff;
+    }
+
+    .consoleok {
+        color: #5cff2c;
+    }
+
+    .nav-tabs {
+        color: white;
+        border-bottom: 2.17px solid #272822;
+        /*width: 100%;
+        overflow-x: scroll;*/
+    }
+
+    .nav-tabs .nav-link {
+        color: white;
+    }
+
+    .nav-tabs > li > a:hover {
+        background-color: #272822;
+        border: 1px solid white;
+        border-bottom: 0;
+    }
+
+    .nav > li > a:focus, .nav > li > a:hover {
+        background-color: #272822;
+        border: 1px solid white;
+        border-bottom: 0;
+    }
+
+    .nav-tabs > li > .active {
+        /*border:  1px solid white ;*/
+        background-color: #33342e;
+    }
+
+    input, button {
+        background: #30312b;
+        color: #f6f6f0;
+        border-color: #84847e;
+    }
+
+    input:focus {
+        background: #272822;
+        color: #f6f6f0;
+        border: 1px solid white;
+    }
+
+    button:hover, button:focus {
+        background: #575951;
+        color: #f6f6f0;
+    }
+
+    .btn.focus, .btn:focus, .btn:hover, .btn:active.focus, .btn:active:focus, .btn:focus {
+        color: #f6f6f0;
+        outline: none;
+    }
+
+    @media only screen and (max-width: 1300px) {
+        .starsName {
+            display: none;
+        }
+    }
+
+    @media only screen and (max-width: 990px) {
+        .starsName, .logo {
+            display: none;
+        }
+
+        .rightbar {
+            border-top: #6a6b66 0.5px solid;
+            border-left: none;
+        }
+
+        #editor {
+            height: 88vh;
+        }
+
+        .fileButtons{
+            border-bottom: #6a6b66 0.5px solid;
+        }
+    }
+
+
+
+    @media only screen and (max-width: 990px) and (min-height: 641px) {
+        #editor {
+            height: 83vh;
+        }
+    }
+
+    @media only screen and (max-width: 990px) and (max-height: 640px) {
+        #editor {
+            height: 84vh;
+        }
+    }
+
+    @media only screen and (max-width: 990px) and (min-height: 800px) {
+        #editor {
+            height: 85vh;
+        }
+    }
+
+
+
+</style>
+<body>
+<div class="layout">
+    <div class="col-md-12 toolbar">
+        <div class="col-md-1 logo"></div>
+        <div class="col-md-1 starsName">
+            <h1 class="starsTextLogo">STARS</h1>
+        </div>
+        <div class="col-md-10">
+            <ul class="nav nav-tabs fileTabs">
+                <li class="nav-item">
+                    <a class="nav-link active fileTab" data-no='0' onclick="selectTab(0)" data-filename="Untitled.star"
+                       href="#">Untitled.star</a>
+                </li>
+                <li class="nav-item addTabItem">
+                    <a class="nav-link active addTab" onclick="addTab(0)" href="#">+</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-12 nomarginnopadding">
+        <div class="col-md-9 nomarginnopadding">
+            <div id="editor">class SimpleContact extends Contract{
+                Storage: {
+                Number CallsCount = 0;
+                }
+
+                Property: {
+                String NAME = 'SimpleContract';
+                }
+
+                Event: {
+                ContractCall(number);
+                }
+
+                public call(){
+                storage.CallsCount++;
+                console.log('CallsCount', storage.CallsCount);
+                emit ContractCall(storage.CallsCount);
+                return true;
+                }
+                }
+            </div>
+        </div>
+        <div class="col-md-3 nomarginnopadding rightbar">
+            <div style="text-align: center" class="fileButtons">
+                <div id="rightFilename">Untitled.star</div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-secondary" id="openFileButton">Open</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-secondary" id="saveFileButton">Save</button>
+                    <button type="button" class="btn btn-secondary" id="renameFileButton">Rename</button>
+                    <button type="button" class="btn btn-secondary" id="composeFileButton">Compose</button>
+                </div>
+                <br>
+                <br>
+            </div>
+            <div>
+                <label for="targetClass" class="sectionDescr">Target class:</label><br>
+                <select class="classSelector" id="targetClass">
+                </select>
+                <br>
+                <br>
+            </div>
+            <div><span class="sectionDescr">Structure:</span><br><br>
+                <div id="classFold"></div>
+                <br>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 console">
+        <div style="text-align: right; color: #84847e;"><a href="#" title="Clear log" onclick="consoleClear()">X</a>
+        </div>
+    </div>
+</div>
+
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"
+        integrity="sha256-kCykSp9wgrszaIBZpbagWbvnsHKXo4noDEi6ra6Y43w=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-elastic_tabstops_lite.js"
+        integrity="sha256-9XFLNefTl+yuf5rk5PdquiWVsAv8iebt6SPOLKxtYBE=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-language_tools.js"
+        integrity="sha256-TUl8ozd4Bntg6buBehHdoNQ4EQh+zUD79p3BpawA5wM=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ext-beautify.js"
+        integrity="sha256-NkYbQ/Iu7SKiTVDsWsS8lL0YElBmbs19/OlGV9TWSQk=" crossorigin="anonymous"></script>
+<script src="../highlighting/ace/mode-star.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/mode-snippets.js"
+        integrity="sha256-MTs2sAnNDn97SaGkKDz6r4gWzDu117aboXCjvY2AObc=" crossorigin="anonymous"></script>
+<script src="../highlighting/ace/snippets/star.js"></script>
+
+
+<script>
+    let module = {exports: {}};
+
+    let files = [];
+    let targetClass;
+
+    /**
+     * Creates source tree
+     * @param source
+     * @return {Array}
+     */
+    function generateSourceTree(source) {
+        return module.exports.decompose(source);
+    }
+
+
+    /**
+     * Compile tree to code
+     * @param tree
+     * @param contractClass
+     * @return {boolean}
+     */
+    function composeTreeToJS(tree, contractClass) {
+        return module.exports.compose(tree, contractClass);
+    }
+
+    ace.require('ace/snippets/star');
+    let editor = ace.edit("editor", {
+        "selectionStyle": "line",
+        "highlightActiveLine": true,
+        "highlightSelectedWord": true,
+        "readOnly": false,
+        "copyWithEmptySelection": "",
+        "cursorStyle": "smooth slim",
+        "mergeUndoDeltas": true,
+        "behavioursEnabled": true,
+        "wrapBehavioursEnabled": true,
+        "keyboardHandler": null,
+        "showLineNumbers": true,
+        "relativeLineNumbers": "",
+        "hScrollBarAlwaysVisible": false,
+        "vScrollBarAlwaysVisible": false,
+        "highlightGutterLine": true,
+        "animatedScroll": "",
+        "showInvisibles": "",
+        "showPrintMargin": true,
+        "printMarginColumn": 120,
+        "printMargin": 120,
+        "fadeFoldWidgets": false,
+        "showFoldWidgets": true,
+        "displayIndentGuides": true,
+        "showGutter": true,
+        "fontSize": 12,
+        "scrollPastEnd": 0,
+        "fixedWidthGutter": "",
+        "maxPixelHeight": 0,
+        "useTextareaForIME": true,
+        "scrollSpeed": 2,
+        "dragDelay": 0,
+        "dragEnabled": true,
+        "focusTimeout": 0,
+        "tooltipFollowsMouse": true,
+        "firstLineNumber": 1,
+        "overwrite": false,
+        "newLineMode": "auto",
+        "useWorker": true,
+        "useSoftTabs": true,
+        "navigateWithinSoftTabs": false,
+        "tabSize": 4,
+        "wrap": "off",
+        "indentedSoftWrap": true,
+        "foldStyle": "markbeginend",
+        "enableMultiselect": true,
+        "enableBlockSelect": true,
+        "rtlText": "",
+        "loadDroppedFile": true,
+        "useElasticTabstops": "",
+        "showTokenInfo": false,
+        "enableEmmet": true,
+        "enableBasicAutocompletion": true,
+        "enableLiveAutocompletion": true,
+        "enableSnippets": true
+    });
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/star");
+    editor.setAutoScrollEditorIntoView(true);
+    files.push({name: 'Untitled.star', content: editor.getValue()});
+
+    let editorMode = editor.session.getMode();
+
+    function updateSourceTree(ignoreTargetClass) {
+        try {
+            let sourceTree = generateSourceTree(editor.getValue());
+            let htmlSrc = '';
+            let classes = [];
+            for (let classP of sourceTree) {
+                classes.push(classP.info.name);
+                htmlSrc += `&nbsp;&nbsp;<span class='classTree'>${classP.info.name}${classP.info.extends ? `<span class="classMuted">:${classP.info.extends}</span>` : ''}</span><br>`;
+
+                if(classP.components.property.length > 0) {
+                    htmlSrc += `<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="sectionDescr">Property:</span><br>`;
+                    for (let property of classP.components.property) {
+                        htmlSrc += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='propertyTree'><span class="varType">${property.type}</span> ${property.name} <span class="propertyValue">${property.value}</span></span><br>`;
+                    }
+                }
+
+                if(classP.components.events.length > 0) {
+                    htmlSrc += `<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="sectionDescr">Events:</span><br>`;
+                    for (let event of classP.components.events) {
+                        htmlSrc += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='eventTree'>${event.source}</span><br>`;
+                    }
+                }
+
+                if(classP.components.storage.length > 0) {
+                    htmlSrc += `<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="sectionDescr">Storage:</span><br>`;
+                    for (let storage of classP.components.storage) {
+                        htmlSrc += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='storageTree'><span class="storageType"><span class="varType">${storage.type}</span> ${storage.name}</span></span><br>`;
+                    }
+                }
+
+
+                if(classP.components.methods.length > 0) {
+                    htmlSrc += `<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="sectionDescr">Methods:</span><br>`;
+                    for (let method of classP.components.methods) {
+                        htmlSrc += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='methodTree ${method.type === 'private' ? 'methodPrivate' : ''}'>${method.declaration.substr(0, (method.declaration.lastIndexOf('{') > 0 ? method.declaration.lastIndexOf('{') : method.declaration.length))}</span><br>`;
+                    }
+                }
+
+                if(sourceTree.length > 1) {
+                    htmlSrc += '<br><div style="width: 100%; border-top: #84847e 0.5px solid; "></div><br>'
+                }
+            }
+
+            $('#classFold').html(htmlSrc);
+
+
+            classes.reverse();
+
+            targetClass = $('#targetClass').val();
+            $('#targetClass').find('option').remove();
+            for (let classp of classes) {
+                $('#targetClass').append(`<option value="${classp}"  ${classp === targetClass || classes.length === 1 ? 'selected' : ''}>${classp}</option>`);
+            }
+            if(targetClass !== $('#targetClass').val() && !ignoreTargetClass) {
+                consoleWrite('Warning: Target class was changed', 'warning');
+            }
+            return sourceTree;
+        } catch (e) {
+        }
+
+    }
+
+
+    /**
+     * Creates new tab
+     *
+     * */
+    function addTab(filename, text = '', path = '') {
+        if(!filename) {
+            filename = 'Untitled.star';
+        }
+
+        let session = new ace.EditSession(text, editorMode);
+        session.setUndoManager(new ace.UndoManager());
+        let newTabIndex = files.push({
+            name: filename,
+            path: path,
+            content: text,
+            targetClass: '',
+            session: session
+        }) - 1;
+
+        $(`<li class="nav-item">
+                <a class="nav-link fileTab" data-no="${newTabIndex}" onclick="selectTab(${newTabIndex})" href="#">${filename}</a>
+            </li>`).insertBefore('.addTabItem');
+
+        /*$('.fileTabs').append(`<li class="nav-item">
+                <a class="nav-link fileTab" data-no="${newTabIndex}" onclick="selectTab(${newTabIndex})" href="#">${filename}</a>
+            </li>`);*/
+
+        //editor.setValue();
+        //editor.session.setUndoManager(new ace.UndoManager());
+        selectTab(newTabIndex);
+
+        return newTabIndex;
+    }
+
+    /**
+     * Get active tab
+     */
+    function getActiveTab() {
+        let currentTab = $('.fileTab.active');
+        let currentTabIndex = currentTab.data('no');
+        return {index: Number(currentTabIndex), dom: currentTab, instance: files[currentTabIndex]};
+    }
+
+    /**
+     * Select tab by index
+     *
+     */
+    function selectTab(index) {
+        let currentTab = getActiveTab();
+        currentTab.dom.removeClass('active');
+        if(Number(index) === Number(currentTab.index)) {
+            return;
+        }
+        //files[currentTab.index].content = editor.getValue();
+        files[currentTab.index].targetClass = $('#targetClass').val();
+        /*files[currentTab.index].cursor = editor.getCursorPosition();
+        files[currentTab.index].selection = editor.selection.getRange();*/
+        files[currentTab.index].session = editor.getSession();
+
+        let nextTab = $(`[data-no='${index}']`);
+        nextTab.addClass('active');
+        let tab = files[index];
+        editor.setSession(tab.session);
+
+        try {
+            updateSourceTree(true);
+            $('#targetClass').val(tab.targetClass);
+        } catch (e) {
+
+        }
+        $('#rightFilename').text(tab.name);
+
+
+    }
+
+    function updateTab(index) {
+        let file = files[index];
+        let nextTab = $(`[data-no='${index}']`);
+        nextTab.text(file.name);
+        if(getActiveTab().index === index) {
+            $('#rightFilename').text(file.name);
+        }
+    }
+
+
+    /**
+     * Write something to console
+     * */
+    function consoleWrite(data, type) {
+        let console = $('.console');
+        console.append(`<span class="console${!type ? 'NoError' : type.toLocaleLowerCase()}">${(new Date()).toLocaleString()} ${data}</span><br>`);
+        console[0].scrollTop = console[0].scrollHeight;
+    }
+
+    function consoleClear() {
+        $('.console').find('span').remove();
+        $('.console').find('br').remove();
+    }
+
+
+    /**
+     *
+     * @param sourceTree
+     */
+    function updateCompileStatus(sourceTree) {
+        if(!$('#targetClass').val()) {
+            return;
+        }
+        let src = '';
+        try {
+            src = composeTreeToJS(sourceTree, $('#targetClass').val());
+            //console.log(src);
+        } catch (e) {
+            consoleWrite(e, 'error');
+        }
+    }
+
+    //Update detection timer
+    let updateTimer;
+
+    function updateTimerMethod() {
+        let sourceTree = updateSourceTree();
+        updateCompileStatus(sourceTree);
+    }
+
+    editor.on('change', function () {
+        let tab = getActiveTab();
+        files[tab.index].content = editor.getValue();
+        clearTimeout(updateTimer);
+        updateTimer = setTimeout(updateTimerMethod, 1000);
+    });
+
+    $(document).ready(function () {
+        updateSourceTree();
+        consoleClear();
+        consoleWrite('Info: STARS SimpleDE started. Version 0.1', 'info');
+        $('#openFileButton').click(function () {
+            selectAndReadFiles(function (content, event, file) {
+                let tabIndex = addTab(file.name, content);
+
+            });
+        });
+
+        $('#saveFileButton').click(function () {
+            let tab = getActiveTab();
+            download(tab.instance.content, tab.instance.name);
+        });
+
+        $('#composeFileButton').click(function () {
+            let tab = getActiveTab();
+            let targetClass = $('#targetClass').val();
+            if(!targetClass) {
+                consoleWrite('Error: No target class', 'error');
+            }
+            try {
+                let sourceTree = generateSourceTree(tab.instance.content);
+                let composed = composeTreeToJS(sourceTree, targetClass);
+
+                download(composed, tab.instance.name + '.js');
+                consoleWrite('OK: Source composed. Start downloading...', 'ok');
+            } catch (e) {
+                consoleWrite(e, 'error');
+            }
+
+        });
+
+        $('#renameFileButton').click(function () {
+            let tab = getActiveTab();
+            let newName = prompt('Rename file', tab.instance.name);
+            if(newName) {
+                tab.instance.name = newName;
+                updateTab(tab.index);
+            }
+        });
+
+        window.onbeforeunload = function confirmExit() {
+            return "Closing a page can result in the loss of unsaved data. Are you sure?";
+        };
+
+
+    });
+
+
+    /**
+     * Load files
+     * @param loadFileCallback
+     */
+    function selectAndReadFiles(loadFileCallback) {
+        function handleFileSelect(evt, cb) {
+            var files = evt.target.files;
+            for (var i = 0, f; f = files[i]; i++) {
+                var reader = new FileReader();
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        loadFileCallback(e.target.result, e, theFile);
+                    };
+                })(f);
+                reader.readAsText(f);
+            }
+            setTimeout(function () {
+                $('#files').remove();
+            }, 500)
+        }
+
+        $('body').append('<input type="file" id="files" name="files[]" multiple style="display: none" />');
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        $('#files').click();
+    }
+
+
+    /**
+     * Download method from stack overflow
+     */
+    function download(text, filename) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+</script>
+<script src="../modules/parser.js"></script>
+<script src="../composers/ecmaContract.js"></script>
 </body>
 </html>
