@@ -1,4 +1,4 @@
-![STAR Logo](https://github.com/lailune/STARScript/raw/master/logo.fw.png | width=250)
+<img src="logo.fw.png"  width="120" height="120">
 
 # STAR (Safe Templated dApplication-Related) Script
 **Programming language for safe decentralized event-driven applications**
