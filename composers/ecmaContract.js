@@ -286,9 +286,9 @@ function composeClass(classObj) {
     } else {
         let constructParams = paramsArray2jsParams(classConstructor.params);
         classJsSource += constructParams.jsdoc;
-        classJsSource += `  constructor(${constructParams.params}){\n`;
+        classJsSource += `  init(${constructParams.params}){\n`;
         if(classObj.info.extends) {
-            classJsSource += `      super(${constructParams.params});\n`;
+            classJsSource += `      super.init(${constructParams.params});\n`;
         }
         classJsSource += `      ${constructParams.validators}`;
         classJsSource += constructStorage;
@@ -311,9 +311,9 @@ function composeClass(classObj) {
     classJsSource += '  ' + composeProperty(classObj.components.property);
     classJsSource += '  ' + composeMethods(classObj.components.methods, classObj);
 
-    classJsSource += '\ninit(){}\n';
+    //classJsSource += '\ninit(){}\n';
 
-    classJsSource += "\n}\n";
+    //classJsSource += "\n}\n";
 
 
     return classJsSource;
