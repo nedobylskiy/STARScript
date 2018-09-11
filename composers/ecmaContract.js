@@ -271,9 +271,9 @@ function composeClass(classObj) {
 
     if(!classConstructor) {
         //throw 'Error: Class "'+classObj.info.name+'" does not have a constructor method. The presence of the constructor method is necessary with the strict rules for the contracts composing'
-        classJsSource += `  constructor(){\n`;
+        classJsSource += `  init(){\n`;
         if(classObj.info.extends) {
-            classJsSource += `      super();\n`;
+            classJsSource += `      super.init();\n`;
         }
 
         classJsSource += constructStorage;
