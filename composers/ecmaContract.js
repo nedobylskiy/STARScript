@@ -336,6 +336,13 @@ function composeStorage(storage) {
                 }
                 constructVars += `   this.${v.name} = new KeyValue('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
                 continue;
+
+            case 'TokenRegister':
+                if(v.value !== '') {
+                    throw 'Error: TokenRegister type does not accept default values for "' + v.name + '" variable'
+                }
+                constructVars += `   this.${v.name} = new TokenRegister('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
+                continue;
             case 'BlockchainArraySafe':
                 if(v.value === '') {
                     constructVars += `   this.${v.name} = new BlockchainArraySafe('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
