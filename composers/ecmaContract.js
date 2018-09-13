@@ -391,10 +391,15 @@ function composeStorage(storage) {
  */
 function composeProperty(properties) {
     let propertySources = '';
+    let propertyObject = {};
     for (let property of properties) {
         propertySources += `    /**\n* @returns {${property.type}}\n*/ \n`;
         propertySources += `    get ${property.name}(){ return ${property.value};}\n`;
+
+        propertyObject[property.name] = property.value;
     }
+
+    propertySources += `    get contract(){ return ${JSON.stringify(propertyObject)};}\n`;
 
     return propertySources;
 }
