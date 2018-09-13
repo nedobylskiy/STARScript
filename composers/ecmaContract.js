@@ -396,10 +396,10 @@ function composeProperty(properties) {
         propertySources += `    /**\n* @returns {${property.type}}\n*/ \n`;
         propertySources += `    get ${property.name}(){ return ${property.value};}\n`;
 
-        propertyObject[property.name] = property.value;
+        propertyObject[property.name] = eval(property.value);
     }
 
-    propertySources += `    get contract(){ return ${JSON.stringify(eval(propertyObject))};}\n`;
+    propertySources += `    get contract(){ return ${JSON.stringify(propertyObject)};}\n`;
 
     return propertySources;
 }
