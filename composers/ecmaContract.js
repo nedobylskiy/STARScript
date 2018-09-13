@@ -236,13 +236,15 @@ function composeClass(classObj) {
 
     let storage = composeStorage(classObj.components.storage);
     let constructStorage = `\n\nconst that = this; this._storageTypes = {}; this._varsStorage = _ECMA_INTERNAL.createOrGetGlobalStorageInstance("${classObj.info.name}");\n
+        let _putRawObject;
         this.storage = new (function(){
             let that2 = this;
             this.currentInstances = {};
+            _putRawObject = function(name, object){
+                that2.currentInstances[name] = object;
+             };
+            
             return  new Proxy(this, {
-                _putRawObject(name, object){
-                    that2.currentInstances[name] = object;
-                },
                  get(target, item) {
                     if(typeof that2.currentInstances[item] !== 'undefined'){
                         return that2.currentInstances[item];
@@ -334,29 +336,35 @@ function composeStorage(storage) {
                 if(v.value !== '') {
                     throw 'Error: KeyValue type does not accept default values for "' + v.name + '" variable'
                 }
-                constructVars += `   this.${v.name} = new KeyValue('${v.name}'); this.storage._putRawObject('${v.name}',this.${v.name}); \n`;
+                constructVars += `   this.${v.name} = new KeyValue('${v.name}'); _putRawObject('${v.name}',this.${v.name}); \n`;
+                continue;
+            case 'TypedKeyValue':
+                if(v.value !== '') {
+                    throw 'Error: TypedKeyValue type does not accept default values for "' + v.name + '" variable'
+                }
+                constructVars += `   this.${v.name} = new TypedKeyValue('${v.name}'); _putRawObject('${v.name}',this.${v.name}); \n`;
                 continue;
 
             case 'TokenRegister':
                 if(v.value !== '') {
                     throw 'Error: TokenRegister type does not accept default values for "' + v.name + '" variable'
                 }
-                constructVars += `   this.${v.name} = new TokenRegister('${v.name}'); this.storage._putRawObject('${v.name}',this.${v.name}); \n`;
+                constructVars += `   this.${v.name} = new TokenRegister('${v.name}'); _putRawObject('${v.name}',this.${v.name}); \n`;
                 continue;
             case 'BlockchainArraySafe':
                 if(v.value === '') {
-                    constructVars += `   this.${v.name} = new BlockchainArraySafe('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
+                    constructVars += `   this.${v.name} = new BlockchainArraySafe('${v.name}'); _putRawObject(${v.name},this.${v.name}); \n`;
                 } else {
-                    constructVars += `   this.${v.name} = new BlockchainArraySafe('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
+                    constructVars += `   this.${v.name} = new BlockchainArraySafe('${v.name}'); _putRawObject(${v.name},this.${v.name}); \n`;
                     deployVars += `this.storage.${v.name}.applyArray(${v.value});`;
                 }
                 continue;
 
             case 'BlockchainArray':
                 if(v.value === '') {
-                    constructVars += `   this.${v.name} = new BlockchainArray('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
+                    constructVars += `   this.${v.name} = new BlockchainArray('${v.name}'); _putRawObject(${v.name},this.${v.name}); \n`;
                 } else {
-                    constructVars += `   this.${v.name} = new BlockchainArray('${v.name}'); this.storage._putRawObject(${v.name},this.${v.name}); \n`;
+                    constructVars += `   this.${v.name} = new BlockchainArray('${v.name}'); _putRawObject(${v.name},this.${v.name}); \n`;
                     deployVars += `this.storage.${v.name}.applyArray(${v.value});`;
                 }
                 continue;
