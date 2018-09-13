@@ -203,9 +203,9 @@ function paramsArray2jsParams(params, quoted, methodName, private) {
         if(param.name) {
             jsParams += `${param.name}, `;
             jsDoc += `* @param {${param.isarray ? 'Array' : param.type}} ${param.name}\n`;
-            if(param.type === 'string') {
+           // if(param.type === 'string') {
                 validators += createParamValidator(param);
-            }
+            //}
         } else {
             jsParams += `${quoted ? '"' : ''}${param.isarray ? 'array' : param.type}${quoted ? '"' : ''}, `;
         }
