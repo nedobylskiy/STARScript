@@ -8,7 +8,7 @@ define("ace/mode/star_highlight_rules", ["require", "exports", "module", "ace/li
 
         var keywordMapper = this.createKeywordMapper({
             "variable.language":
-                "Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|KeyValue|number|object|BigNumber|BlockchainArray|BlockchainArraySafe|" + // Constructors
+                "Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|KeyValue|number|object|BigNumber|BlockchainArray|BlockchainArraySafe|TypedKeyValue|BlockchainObject|" + // Constructors
                 "Namespace|QName|XML|XMLList|" + // E4X
                 "ArrayBuffer|Float32Array|Float64Array|Int16Array|Int32Array|Int8Array|" +
                 "Uint16Array|Uint32Array|Uint8Array|Uint8ClampedArray|" +
@@ -47,7 +47,7 @@ define("ace/mode/star_highlight_rules", ["require", "exports", "module", "ace/li
                     },
                     {
                         token: 'storage.type.Star.2',
-                        regex: '\\b(?:Boolean|Number|String|Void|Array|Object|KeyValue|BlockchainArraySafe|BlockchainArray|number|string|object|BigNumber|array|Array)\\b'
+                        regex: '\\b(?:Boolean|Number|String|Void|Array|Object|KeyValue|BlockchainArraySafe|BlockchainArray|TypedKeyValue|BlockchainObject|number|string|object|BigNumber|array|Array)\\b'
                     },
                     {
                         token: 'constant.language.Star.2',
