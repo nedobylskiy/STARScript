@@ -344,6 +344,12 @@ function composeStorage(storage) {
                 }
                 constructVars += `   this.${v.name} = new TypedKeyValue('${v.name}'); _putRawObject('${v.name}',this.${v.name}); \n`;
                 continue;
+            case 'BlockchainObject':
+                if(v.value !== '') {
+                    throw 'Error: BlockchainObject type does not accept default values for "' + v.name + '" variable'
+                }
+                constructVars += `   this.${v.name} = new BlockchainObject('${v.name}'); _putRawObject('${v.name}',this.${v.name}); \n`;
+                continue;
 
             case 'TokenRegister':
                 if(v.value !== '') {
