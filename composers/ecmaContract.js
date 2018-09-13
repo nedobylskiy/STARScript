@@ -399,7 +399,7 @@ function composeProperty(properties) {
         propertyObject[property.name] = property.value;
     }
 
-    propertySources += `    get contract(){ return ${JSON.stringify(propertyObject)};}\n`;
+    propertySources += `    get contract(){ return ${JSON.stringify(JSON.parse(propertyObject))};}\n`;
 
     return propertySources;
 }
